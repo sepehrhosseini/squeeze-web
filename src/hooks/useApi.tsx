@@ -3,8 +3,6 @@ import { useAuth0 } from '@auth0/auth0-react'
 import axios from 'axios'
 
 interface Options {
-  audience?: string
-  scope?: string
   headers?: Object
 }
 
@@ -15,8 +13,6 @@ interface State {
 }
 
 const defaultOptions = {
-  audience: 'localhost',
-  // scope: null,
   headers: {},
 }
 
@@ -31,6 +27,7 @@ function useApi(url: string, options: Options = defaultOptions) {
   const isInitialMount = useRef(true)
 
   useEffect(() => {
+    console.log("refreshIndex: ", refreshIndex);
     if (isInitialMount.current) {
       isInitialMount.current = false
       return
@@ -38,10 +35,9 @@ function useApi(url: string, options: Options = defaultOptions) {
 
     ;(async () => {
       try {
-        const { audience, scope, ...fetchOptions } = options
         const accessToken = await getAccessTokenSilently()
         const { data } = await axios(url, {
-          ...fetchOptions,
+          ...options,
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
